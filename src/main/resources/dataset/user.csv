@@ -1,0 +1,6 @@
+UserName;email;Password;Roles;firstname;lastname;langkey
+UserA;User@domain.com;UserA;Role_User;User;A;EN
+UserB;UserB@domain.com;UserB;Role_User;User;B;EN
+UserC;UserC@domain.com;UserC;Role_Anonymous;User;C;EN
+UserD;UserD@domain.com;UserD;Role_User;User;D;EN
+admin;admin@domain.com;admin;Role_User,Role_Admin;admin;admin;EN
