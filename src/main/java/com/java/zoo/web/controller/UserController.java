@@ -1,4 +1,4 @@
-package com.java.zoo.web.rest;
+package com.java.zoo.web.controller;
 
 
 
@@ -35,8 +35,8 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
-public class UserResource {
-    private final Logger log = LoggerFactory.getLogger(UserResource.class);
+public class UserController {
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Value("${spring.application.name}")
     private String applicationName;

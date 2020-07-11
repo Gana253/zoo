@@ -6,6 +6,8 @@ jwt:
 
 inputfile:
   user-name: classpath:dataset/user.csv
+  room-name: classpath:dataset/room.csv
+  animal-name: classpath:dataset/animal.csv
 
 
 spring:
@@ -19,6 +21,8 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database: mysql
+    properties:
+      hibernate.enable_lazy_load_no_trans: false
 logging:
   level:
     root: INFO

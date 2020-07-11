@@ -32,8 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Entry points
         http.authorizeRequests()//
                 .antMatchers("/authenticate").permitAll()//To authorize the user
+                .antMatchers("/api/zoo/*").permitAll();//To authorize the user
                 // Disallow everything else..
-                .anyRequest().authenticated();
+                //.anyRequest().authenticated();
 
         // Apply JWT
         http.apply(new JwtTokenFilterConfigurer(jwtTokenUtil));

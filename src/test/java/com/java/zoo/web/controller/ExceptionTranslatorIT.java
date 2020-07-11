@@ -1,7 +1,7 @@
-package com.java.zoo.web.rest;
+package com.java.zoo.web.controller;
 
-import com.java.zoo.web.errors.ExceptionTranslator;
 import com.java.zoo.ZooApplication;
+import com.java.zoo.web.errors.ExceptionTranslator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

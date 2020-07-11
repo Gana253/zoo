@@ -1,4 +1,4 @@
-package com.java.zoo.web.rest;
+package com.java.zoo.web.controller;
 
 
 import com.java.zoo.ZooApplication;
@@ -17,12 +17,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration Test for the {@link JwtAuthenticationResource} REST controller.
+ * Integration Test for the {@link JwtAuthenticationController} REST controller.
  */
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ZooApplication.class)
 @WithMockUser
-public class JwtAuthenticationResourceIT {
+public class JwtAuthenticationControllerIT {
 
     @Autowired
     private MockMvc jwtAuthenticateMvcMock;

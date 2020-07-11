@@ -1,4 +1,4 @@
-package com.java.zoo.web.rest;
+package com.java.zoo.web.controller;
 
 
 import com.java.zoo.ZooApplication;
@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,12 +30,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests for the {@link UserResource} REST controller.
+ * Integration tests for the {@link UserController} REST controller.
  */
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ZooApplication.class)
 @WithMockUser
-public class UserResourceIT {
+public class UserControllerIT {
     private static final String DEFAULT_LOGIN = "johndoe";
     private static final String UPDATED_LOGIN = "doejohn";
 
