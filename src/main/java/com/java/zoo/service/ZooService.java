@@ -1,72 +1,79 @@
 package com.java.zoo.service;
 
 import com.java.zoo.entity.Animal;
+import com.java.zoo.entity.Favorite;
 import com.java.zoo.entity.Room;
+import com.java.zoo.repository.AnimalRepository;
+import com.java.zoo.repository.FavoriteRepository;
 import com.java.zoo.repository.RoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ZooService {
     private static final Logger log = LoggerFactory.getLogger(ZooService.class);
 
-    @Autowired
-    private RoomRepository roomRepository;
 
-    public Room placeAnimal(Animal animal) {
-        List<Room> matchingRooms;
-        if (animal.getType().equals(">=")) {
-            matchingRooms = roomRepository.findAllByAllotedIsFalseAndSizeGreaterThanEqualOrderBySizeAsc(animal.getPreference());
-        } else {
-            matchingRooms = roomRepository.findAllByAllotedIsFalseAndSizeLessThanEqualOrderBySizeDesc(animal.getPreference());
-        }
+    private final RoomRepository roomRepository;
 
-        Room room = matchingRooms.get(0);
-        room.getAnimals().add(animal);
-        room.setAlloted(true);
-        animal.setRoom(room);
-        roomRepository.saveAndFlush(room);
-        return room;
+
+    private final AnimalRepository animalRepository;
+
+
+    private final FavoriteRepository favoriteRepository;
+
+    public ZooService(RoomRepository roomRepository, AnimalRepository animalRepository, FavoriteRepository favoriteRepository) {
+        this.roomRepository = roomRepository;
+        this.animalRepository = animalRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
-    public Room moveAnimal(Animal animal,Long userPreferredRoom) {
-        Room presentRoom = animal.getRoom();
-        presentRoom.getAnimals().remove(animal);
-        presentRoom.setAlloted(false);
-        Room room;
-        if(userPreferredRoom > 0){
-            Optional<Room> roomOpt = roomRepository.findById(userPreferredRoom);
-            room = roomOpt.get();
-            room.getAnimals().add(animal);
-            room.setAlloted(true);
-            animal.setRoom(room);
-            roomRepository.saveAndFlush(room);
-        }else {
-            List<Room> matchingRooms;
-            if (animal.getType().equals(">=")) {
-                matchingRooms = roomRepository.findAllByAllotedIsFalseAndSizeGreaterThanEqualOrderBySizeAsc(animal.getPreference());
-            } else {
-                matchingRooms = roomRepository.findAllByAllotedIsFalseAndSizeLessThanEqualOrderBySizeDesc(animal.getPreference());
-            }
 
-            room = matchingRooms.get(0);
-            room.getAnimals().add(animal);
-            animal.setRoom(room);
-        }
-        roomRepository.saveAndFlush(room);
-        roomRepository.saveAndFlush(presentRoom);
-        return room;
+    public void placeAnimal(Animal animal, Room room) {
+        log.debug("Place animal service method animal id: {}, room id: {}", animal.getId(), room.getId());
+        addAnimalToRoomAndSave(animal, room);
+    }
+
+    public void moveAnimal(Animal animal, Room room) {
+        log.debug("Move animal service method animal id: {}, room id: {}", animal.getId(), room.getId());
+        removeAssociatedAnimalAndSave(animal);
+        addAnimalToRoomAndSave(animal, room);
     }
 
     public void deleteAnimalFromRoom(Animal animal) {
+        log.debug("Delete animal service method animal id: {}", animal.getId());
+        removeAssociatedAnimalAndSave(animal);
+    }
+
+    public void assignFavoriteRoom(Animal animal, Room room) {
+        log.debug("Assign favorite room to animal service method animal id: {}, room id: {}", animal.getId(), room.getId());
+        Favorite fav = new Favorite();
+        fav.setRoomId(room.getId());
+        fav.setAnimal(animal);
+        animal.getFavorites().add(fav);
+        animalRepository.saveAndFlush(animal);
+
+    }
+
+    public void unassignFavoriteRoom(Animal animal, Room room) {
+        log.debug("UnAssign favorite room to animal service method animal id: {}, room id: {}", animal.getId(), room.getId());
+        Favorite fav = favoriteRepository.findByRoomIdAndAnimalId(room.getId(), animal.getId());
+        animal.getFavorites().remove(fav);
+        animalRepository.saveAndFlush(animal);
+    }
+
+    private void removeAssociatedAnimalAndSave(Animal animal) {
         Room presentRoom = animal.getRoom();
         presentRoom.getAnimals().remove(animal);
-        presentRoom.setAlloted(false);
         roomRepository.saveAndFlush(presentRoom);
     }
+
+
+    private void addAnimalToRoomAndSave(Animal animal, Room room) {
+        room.getAnimals().add(animal);
+        animal.setRoom(room);
+        roomRepository.saveAndFlush(room);
+    }
+
 }

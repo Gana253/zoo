@@ -24,7 +24,7 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode
 @ToString
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Animal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,7 +38,8 @@ public class Animal implements Serializable {
     private String title;
 
     @Column(name = "located")
-    private Instant located = Instant.now();;
+    private Instant located = Instant.now();
+    ;
 
     @Column(name = "type")
     private String type;
@@ -46,14 +47,15 @@ public class Animal implements Serializable {
     @Column(name = "preference")
     private Long preference;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Favorite> favorites = new HashSet<>();
 
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude @ToString.Exclude
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonIgnoreProperties(value = "animals", allowSetters = true)
     private Room room;
 

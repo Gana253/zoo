@@ -10,7 +10,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -26,7 +25,7 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode
 @ToString
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Room implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,17 +43,14 @@ public class Room implements Serializable {
     private Long size;
 
     @Column(name = "created")
-    private Instant created = Instant.now();;
+    private Instant created = Instant.now();
 
-    @NotNull
-    @Column(nullable = false)
-    private boolean alloted = false;
-
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = "animals", allowSetters = true)
-    @EqualsAndHashCode.Exclude @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Animal> animals = new HashSet<>();
 
 

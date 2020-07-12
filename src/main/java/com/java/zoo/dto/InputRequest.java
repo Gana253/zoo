@@ -1,5 +1,7 @@
 package com.java.zoo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,10 +16,12 @@ import java.io.Serializable;
 public class InputRequest implements Serializable {
     private static final long serialVersionUID = 7217291299864447435L;
 
+    @JsonProperty("animalId")
+    @NotNull
     private Long animalId;
 
-    private Long roomId;
-
+    @JsonProperty("toRoomId")
+    @NotNull
     private Long toRoomId;
 
 }

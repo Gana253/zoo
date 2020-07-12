@@ -8,6 +8,7 @@ public final class Constants {
     public static final String ANONYMOUS_USER = "anonymoususer";
     public static final String CREATED_BY = "SYSTEM";
 
-    private Constants() {}
+    private Constants() {
+    }
 
 }

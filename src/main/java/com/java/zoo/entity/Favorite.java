@@ -17,7 +17,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "favorite")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Getter @Setter
+@Getter
+@Setter
 @EqualsAndHashCode
 @ToString
 public class Favorite implements Serializable {
@@ -33,7 +34,8 @@ public class Favorite implements Serializable {
     private Long roomId;
 
     @ManyToOne
-    @EqualsAndHashCode.Exclude @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonIgnoreProperties(value = "favorites", allowSetters = true)
     private Animal animal;
 

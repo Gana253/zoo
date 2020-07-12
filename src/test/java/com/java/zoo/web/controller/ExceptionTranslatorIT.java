@@ -27,68 +27,68 @@ public class ExceptionTranslatorIT {
     @Test
     public void testMethodArgumentNotValid() throws Exception {
         mockMvc
-            .perform(post("/api/exception-translator-test/method-argument").content("").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
+                .perform(post("/api/exception-translator-test/method-argument").content("").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
     }
 
     @Test
     public void testMissingServletRequestPartException() throws Exception {
         mockMvc
-            .perform(get("/api/exception-translator-test/missing-servlet-request-part"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
+                .perform(get("/api/exception-translator-test/missing-servlet-request-part"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
     }
 
     @Test
     public void testMissingServletRequestParameterException() throws Exception {
         mockMvc
-            .perform(get("/api/exception-translator-test/missing-servlet-request-parameter"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
+                .perform(get("/api/exception-translator-test/missing-servlet-request-parameter"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
     }
 
     @Test
     public void testAccessDenied() throws Exception {
         mockMvc
-            .perform(get("/api/exception-translator-test/access-denied"))
-            .andExpect(status().isForbidden())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-            .andExpect(jsonPath("$.detail").value("test access denied!"));
+                .perform(get("/api/exception-translator-test/access-denied"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value("test access denied!"));
     }
 
     @Test
     public void testUnauthorized() throws Exception {
         mockMvc
-            .perform(get("/api/exception-translator-test/unauthorized"))
-            .andExpect(status().isUnauthorized())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
+                .perform(get("/api/exception-translator-test/unauthorized"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
     }
 
     @Test
     public void testMethodNotSupported() throws Exception {
         mockMvc
-            .perform(post("/api/exception-translator-test/access-denied"))
-            .andExpect(status().isMethodNotAllowed())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-            .andExpect(jsonPath("$.detail").value("Request method 'POST' not supported"));
+                .perform(post("/api/exception-translator-test/access-denied"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value("Request method 'POST' not supported"));
     }
 
     @Test
     public void testExceptionWithResponseStatus() throws Exception {
         mockMvc
-            .perform(get("/api/exception-translator-test/response-status"))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-            .andExpect(jsonPath("$.title").value("test response status"));
+                .perform(get("/api/exception-translator-test/response-status"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("test response status"));
     }
 
     @Test
     public void testInternalServerError() throws Exception {
         mockMvc
-            .perform(get("/api/exception-translator-test/internal-server-error"))
-            .andExpect(status().isInternalServerError())
-            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-            .andExpect(jsonPath("$.title").value("Internal Server Error"));
+                .perform(get("/api/exception-translator-test/internal-server-error"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Internal Server Error"));
     }
 }

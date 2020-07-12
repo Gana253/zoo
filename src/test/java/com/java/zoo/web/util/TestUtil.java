@@ -115,6 +115,7 @@ public final class TestUtil {
 
     /**
      * Create a {@link FormattingConversionService} which use ISO date format, instead of the localized one.
+     *
      * @return the {@link FormattingConversionService}.
      */
     public static FormattingConversionService createFormattingConversionService() {
@@ -125,5 +126,6 @@ public final class TestUtil {
         return dfcs;
     }
 
-    private TestUtil() {}
+    private TestUtil() {
+    }
 }

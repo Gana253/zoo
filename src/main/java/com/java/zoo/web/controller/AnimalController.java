@@ -1,6 +1,7 @@
 package com.java.zoo.web.controller;
 
 
+import com.java.zoo.dto.AnimalsJsonObject;
 import com.java.zoo.entity.Animal;
 import com.java.zoo.exception.BadRequestAlertException;
 import com.java.zoo.repository.AnimalRepository;
@@ -54,8 +55,8 @@ public class AnimalController {
         }
         Animal result = animalRepository.save(animal);
         return ResponseEntity.created(new URI("/api/animals/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -74,8 +75,8 @@ public class AnimalController {
         }
         Animal result = animalRepository.save(animal);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, animal.getId().toString()))
-            .body(result);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, animal.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -113,5 +114,29 @@ public class AnimalController {
         log.debug("REST request to delete Animal : {}", id);
         animalRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * {@code GET  /animals/without} : get the List of animals which is not assigned with room.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of animals.
+     */
+    @GetMapping("/animals/withoutroom")
+    public List<AnimalsJsonObject> getAnimalsWithOutRoom() {
+        log.debug("REST request to get Animals without room ");
+        return animalRepository.findAllByRoomIsNullOrderByLocatedDesc();
+    }
+
+
+
+    /**
+     * {@code GET  /rooms} : get all the rooms.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rooms in body.
+     */
+    @GetMapping("/animals/room/{roomId}")
+    public List<AnimalsJsonObject> getAllAnimalsInRoom(@PathVariable Long roomId) {
+        log.debug("REST request to get all Rooms");
+        return animalRepository.findAllByRoom_IdEqualsOrderByLocatedDesc(roomId);
     }
 }

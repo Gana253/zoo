@@ -34,7 +34,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(username)
                 .password(user.get().getPassword())
-                .authorities(Arrays.asList("ROLE_ADMIN","ROLE_USER").stream()
+                .authorities(Arrays.asList("ROLE_ADMIN", "ROLE_USER").stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList()))
                 .accountExpired(false)

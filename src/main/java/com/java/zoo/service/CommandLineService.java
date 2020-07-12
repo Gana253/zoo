@@ -97,12 +97,12 @@ public class CommandLineService {
                                 break;
                         }
                     }
-                    Set<Favorite> favorites = new HashSet<>();
+                   Set<Favorite> favorites = new HashSet<>();
                     List<Room> matchingRooms;
                     if (animal.getType().equals(">=")) {
-                        matchingRooms = roomRepository.findAllByAllotedIsFalseAndSizeGreaterThanEqualOrderBySizeAsc(animal.getPreference());
+                        matchingRooms = roomRepository.findAllBySizeGreaterThanEqualOrderBySizeAsc(animal.getPreference());
                     } else {
-                        matchingRooms = roomRepository.findAllByAllotedIsFalseAndSizeLessThanEqualOrderBySizeDesc(animal.getPreference());
+                        matchingRooms = roomRepository.findAllBySizeLessThanEqualOrderBySizeDesc(animal.getPreference());
                     }
                     matchingRooms.forEach(e -> {
 

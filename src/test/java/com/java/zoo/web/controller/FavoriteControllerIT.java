@@ -50,14 +50,14 @@ public class FavoriteControllerIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
     public static Favorite createEntity(EntityManager em) {
         Favorite favorite = new Favorite();
         favorite.setRoomId(DEFAULT_ROOM_ID);
-       // favorite.setAnimalId(DEFAULT_ANIMAL_ID);
+        // favorite.setAnimalId(DEFAULT_ANIMAL_ID);
         return favorite;
     }
 
@@ -72,16 +72,16 @@ public class FavoriteControllerIT {
         int databaseSizeBeforeCreate = favoriteRepository.findAll().size();
         // Create the Favorite
         restFavoriteMockMvc.perform(post("/api/favorites")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(favorite)))
-            .andExpect(status().isCreated());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(favorite)))
+                .andExpect(status().isCreated());
 
         // Validate the Favorite in the database
         List<Favorite> favoriteList = favoriteRepository.findAll();
         assertThat(favoriteList).hasSize(databaseSizeBeforeCreate + 1);
         Favorite testFavorite = favoriteList.get(favoriteList.size() - 1);
         assertThat(testFavorite.getRoomId()).isEqualTo(DEFAULT_ROOM_ID);
-       // assertThat(testFavorite.getAnimalId()).isEqualTo(DEFAULT_ANIMAL_ID);
+        // assertThat(testFavorite.getAnimalId()).isEqualTo(DEFAULT_ANIMAL_ID);
     }
 
     @Test
@@ -94,9 +94,9 @@ public class FavoriteControllerIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFavoriteMockMvc.perform(post("/api/favorites")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(favorite)))
-            .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(favorite)))
+                .andExpect(status().isBadRequest());
 
         // Validate the Favorite in the database
         List<Favorite> favoriteList = favoriteRepository.findAll();
@@ -112,13 +112,13 @@ public class FavoriteControllerIT {
 
         // Get all the favoriteList
         restFavoriteMockMvc.perform(get("/api/favorites?sort=id,desc"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(favorite.getId().intValue())))
-            .andExpect(jsonPath("$.[*].roomId").value(hasItem(DEFAULT_ROOM_ID.intValue())))
-            .andExpect(jsonPath("$.[*].animalId").value(hasItem(DEFAULT_ANIMAL_ID.intValue())));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(favorite.getId().intValue())))
+                .andExpect(jsonPath("$.[*].roomId").value(hasItem(DEFAULT_ROOM_ID.intValue())))
+                .andExpect(jsonPath("$.[*].animalId").value(hasItem(DEFAULT_ANIMAL_ID.intValue())));
     }
-    
+
     @Test
     @Transactional
     public void getFavorite() throws Exception {
@@ -127,18 +127,19 @@ public class FavoriteControllerIT {
 
         // Get the favorite
         restFavoriteMockMvc.perform(get("/api/favorites/{id}", favorite.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(favorite.getId().intValue()))
-            .andExpect(jsonPath("$.roomId").value(DEFAULT_ROOM_ID.intValue()))
-            .andExpect(jsonPath("$.animalId").value(DEFAULT_ANIMAL_ID.intValue()));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(favorite.getId().intValue()))
+                .andExpect(jsonPath("$.roomId").value(DEFAULT_ROOM_ID.intValue()))
+                .andExpect(jsonPath("$.animalId").value(DEFAULT_ANIMAL_ID.intValue()));
     }
+
     @Test
     @Transactional
     public void getNonExistingFavorite() throws Exception {
         // Get the favorite
         restFavoriteMockMvc.perform(get("/api/favorites/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -155,12 +156,12 @@ public class FavoriteControllerIT {
         em.detach(updatedFavorite);
 
         updatedFavorite.setRoomId(UPDATED_ROOM_ID);
-       // updatedFavorite.setAnimalId(UPDATED_ANIMAL_ID);
+        // updatedFavorite.setAnimalId(UPDATED_ANIMAL_ID);
 
         restFavoriteMockMvc.perform(put("/api/favorites")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedFavorite)))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(updatedFavorite)))
+                .andExpect(status().isOk());
 
         // Validate the Favorite in the database
         List<Favorite> favoriteList = favoriteRepository.findAll();
@@ -177,9 +178,9 @@ public class FavoriteControllerIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFavoriteMockMvc.perform(put("/api/favorites")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(favorite)))
-            .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(favorite)))
+                .andExpect(status().isBadRequest());
 
         // Validate the Favorite in the database
         List<Favorite> favoriteList = favoriteRepository.findAll();
@@ -196,8 +197,8 @@ public class FavoriteControllerIT {
 
         // Delete the favorite
         restFavoriteMockMvc.perform(delete("/api/favorites/{id}", favorite.getId())
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNoContent());
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         List<Favorite> favoriteList = favoriteRepository.findAll();

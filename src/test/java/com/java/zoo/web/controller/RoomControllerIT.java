@@ -54,7 +54,7 @@ public class RoomControllerIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -78,9 +78,9 @@ public class RoomControllerIT {
         int databaseSizeBeforeCreate = roomRepository.findAll().size();
         // Create the Room
         restRoomMockMvc.perform(post("/api/rooms")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(room)))
-            .andExpect(status().isCreated());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(room)))
+                .andExpect(status().isCreated());
 
         // Validate the Room in the database
         List<Room> roomList = roomRepository.findAll();
@@ -101,9 +101,9 @@ public class RoomControllerIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restRoomMockMvc.perform(post("/api/rooms")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(room)))
-            .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(room)))
+                .andExpect(status().isBadRequest());
 
         // Validate the Room in the database
         List<Room> roomList = roomRepository.findAll();
@@ -119,14 +119,14 @@ public class RoomControllerIT {
 
         // Get all the roomList
         restRoomMockMvc.perform(get("/api/rooms?sort=id,desc"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(room.getId().intValue())))
-            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
-            .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE.intValue())))
-            .andExpect(jsonPath("$.[*].created").value(hasItem(DEFAULT_CREATED.toString())));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(room.getId().intValue())))
+                .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
+                .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE.intValue())))
+                .andExpect(jsonPath("$.[*].created").value(hasItem(DEFAULT_CREATED.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getRoom() throws Exception {
@@ -135,19 +135,20 @@ public class RoomControllerIT {
 
         // Get the room
         restRoomMockMvc.perform(get("/api/rooms/{id}", room.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(room.getId().intValue()))
-            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
-            .andExpect(jsonPath("$.size").value(DEFAULT_SIZE.intValue()))
-            .andExpect(jsonPath("$.created").value(DEFAULT_CREATED.toString()));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(room.getId().intValue()))
+                .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
+                .andExpect(jsonPath("$.size").value(DEFAULT_SIZE.intValue()))
+                .andExpect(jsonPath("$.created").value(DEFAULT_CREATED.toString()));
     }
+
     @Test
     @Transactional
     public void getNonExistingRoom() throws Exception {
         // Get the room
         restRoomMockMvc.perform(get("/api/rooms/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -167,9 +168,9 @@ public class RoomControllerIT {
         updatedRoom.setCreated(UPDATED_CREATED);
 
         restRoomMockMvc.perform(put("/api/rooms")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedRoom)))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(updatedRoom)))
+                .andExpect(status().isOk());
 
         // Validate the Room in the database
         List<Room> roomList = roomRepository.findAll();
@@ -187,9 +188,9 @@ public class RoomControllerIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRoomMockMvc.perform(put("/api/rooms")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(room)))
-            .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(room)))
+                .andExpect(status().isBadRequest());
 
         // Validate the Room in the database
         List<Room> roomList = roomRepository.findAll();
@@ -206,8 +207,8 @@ public class RoomControllerIT {
 
         // Delete the room
         restRoomMockMvc.perform(delete("/api/rooms/{id}", room.getId())
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNoContent());
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         List<Room> roomList = roomRepository.findAll();

@@ -1,6 +1,7 @@
 package com.java.zoo.web.controller;
 
 
+import com.java.zoo.dto.AnimalsJsonObject;
 import com.java.zoo.entity.Room;
 import com.java.zoo.exception.BadRequestAlertException;
 import com.java.zoo.repository.RoomRepository;
@@ -55,8 +56,8 @@ public class RoomController {
         }
         Room result = roomRepository.save(room);
         return ResponseEntity.created(new URI("/api/rooms/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -76,8 +77,8 @@ public class RoomController {
         }
         Room result = roomRepository.save(room);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, room.getId().toString()))
-            .body(result);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, room.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -116,4 +117,5 @@ public class RoomController {
         roomRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
+
 }

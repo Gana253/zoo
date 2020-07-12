@@ -58,7 +58,7 @@ public class AnimalControllerIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -83,9 +83,9 @@ public class AnimalControllerIT {
         int databaseSizeBeforeCreate = animalRepository.findAll().size();
         // Create the Animal
         restAnimalMockMvc.perform(post("/api/animals")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(animal)))
-            .andExpect(status().isCreated());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(animal)))
+                .andExpect(status().isCreated());
 
         // Validate the Animal in the database
         List<Animal> animalList = animalRepository.findAll();
@@ -107,9 +107,9 @@ public class AnimalControllerIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restAnimalMockMvc.perform(post("/api/animals")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(animal)))
-            .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(animal)))
+                .andExpect(status().isBadRequest());
 
         // Validate the Animal in the database
         List<Animal> animalList = animalRepository.findAll();
@@ -125,15 +125,15 @@ public class AnimalControllerIT {
 
         // Get all the animalList
         restAnimalMockMvc.perform(get("/api/animals?sort=id,desc"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(animal.getId().intValue())))
-            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
-            .andExpect(jsonPath("$.[*].located").value(hasItem(DEFAULT_LOCATED.toString())))
-            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)))
-            .andExpect(jsonPath("$.[*].preference").value(hasItem(DEFAULT_PREFERENCE.intValue())));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(animal.getId().intValue())))
+                .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
+                .andExpect(jsonPath("$.[*].located").value(hasItem(DEFAULT_LOCATED.toString())))
+                .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)))
+                .andExpect(jsonPath("$.[*].preference").value(hasItem(DEFAULT_PREFERENCE.intValue())));
     }
-    
+
     @Test
     @Transactional
     public void getAnimal() throws Exception {
@@ -142,20 +142,21 @@ public class AnimalControllerIT {
 
         // Get the animal
         restAnimalMockMvc.perform(get("/api/animals/{id}", animal.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(animal.getId().intValue()))
-            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
-            .andExpect(jsonPath("$.located").value(DEFAULT_LOCATED.toString()))
-            .andExpect(jsonPath("$.type").value(DEFAULT_TYPE))
-            .andExpect(jsonPath("$.preference").value(DEFAULT_PREFERENCE.intValue()));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(animal.getId().intValue()))
+                .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
+                .andExpect(jsonPath("$.located").value(DEFAULT_LOCATED.toString()))
+                .andExpect(jsonPath("$.type").value(DEFAULT_TYPE))
+                .andExpect(jsonPath("$.preference").value(DEFAULT_PREFERENCE.intValue()));
     }
+
     @Test
     @Transactional
     public void getNonExistingAnimal() throws Exception {
         // Get the animal
         restAnimalMockMvc.perform(get("/api/animals/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -176,9 +177,9 @@ public class AnimalControllerIT {
         updatedAnimal.setPreference(UPDATED_PREFERENCE);
 
         restAnimalMockMvc.perform(put("/api/animals")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedAnimal)))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(updatedAnimal)))
+                .andExpect(status().isOk());
 
         // Validate the Animal in the database
         List<Animal> animalList = animalRepository.findAll();
@@ -197,9 +198,9 @@ public class AnimalControllerIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAnimalMockMvc.perform(put("/api/animals")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(animal)))
-            .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(animal)))
+                .andExpect(status().isBadRequest());
 
         // Validate the Animal in the database
         List<Animal> animalList = animalRepository.findAll();
@@ -216,8 +217,8 @@ public class AnimalControllerIT {
 
         // Delete the animal
         restAnimalMockMvc.perform(delete("/api/animals/{id}", animal.getId())
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNoContent());
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
         List<Animal> animalList = animalRepository.findAll();

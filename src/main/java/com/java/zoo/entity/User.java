@@ -22,7 +22,8 @@ import java.time.Instant;
  * User Entity
  */
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User implements Serializable {

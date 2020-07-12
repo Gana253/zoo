@@ -53,8 +53,8 @@ public class FavoriteController {
         }
         Favorite result = favoriteRepository.save(favorite);
         return ResponseEntity.created(new URI("/api/favorites/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -74,8 +74,8 @@ public class FavoriteController {
         }
         Favorite result = favoriteRepository.save(favorite);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, favorite.getId().toString()))
-            .body(result);
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, favorite.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -113,5 +113,16 @@ public class FavoriteController {
         log.debug("REST request to delete Favorite : {}", id);
         favoriteRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * {@code GET  /favorites} : get all the favorites.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of favorites in body.
+     */
+    @GetMapping("/favorites/room/{animalId}")
+    public List<String> getAllFavoritesRoomForAnimal(@PathVariable Long animalId) {
+        log.debug("REST request to get all Favorites");
+        return favoriteRepository.findFavoriteRooms(animalId);
     }
 }
