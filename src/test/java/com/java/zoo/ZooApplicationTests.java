@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ZooApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void main() {
+        ZooApplication.main(new String[] {});
     }
 
 }

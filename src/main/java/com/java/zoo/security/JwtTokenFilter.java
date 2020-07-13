@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
     public JwtTokenFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
@@ -72,11 +71,6 @@ public class User implements Serializable {
     @Column(name = "created_date", updatable = false)
     @JsonIgnore
     private Instant createdDate = Instant.now();
-
-    @LastModifiedBy
-    @Column(name = "last_modified_by", length = 50)
-    @JsonIgnore
-    private String lastModifiedBy;
 
     @LastModifiedDate
     @Column(name = "last_modified_date")

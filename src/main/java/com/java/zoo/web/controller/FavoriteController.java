@@ -64,10 +64,9 @@ public class FavoriteController {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated favorite,
      * or with status {@code 400 (Bad Request)} if the favorite is not valid,
      * or with status {@code 500 (Internal Server Error)} if the favorite couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/favorites")
-    public ResponseEntity<Favorite> updateFavorite(@RequestBody Favorite favorite) throws URISyntaxException {
+    public ResponseEntity<Favorite> updateFavorite(@RequestBody Favorite favorite) {
         log.debug("REST request to update Favorite : {}", favorite);
         if (favorite.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -116,13 +115,14 @@ public class FavoriteController {
     }
 
     /**
-     * {@code GET  /favorites} : get all the favorites.
+     * {@code GET  /favorites/room/{animalId}} : get all the favorite rooms for given animal.
      *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of favorites in body.
+     * @param animalId the id of the animal for which favorite rooms to be fetched.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of favorite rooms in body.
      */
     @GetMapping("/favorites/room/{animalId}")
     public List<String> getAllFavoritesRoomForAnimal(@PathVariable Long animalId) {
-        log.debug("REST request to get all Favorites");
+        log.debug("REST request to get all Favorite rooms for given animal id:{}",animalId);
         return favoriteRepository.findFavoriteRooms(animalId);
     }
 }

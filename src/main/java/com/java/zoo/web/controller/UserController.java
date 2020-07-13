@@ -15,7 +15,6 @@ import com.java.zoo.util.HeaderUtil;
 import com.java.zoo.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -39,11 +38,15 @@ public class UserController {
 
     @Value("${spring.application.name}")
     private String applicationName;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserRepository userRepository;
 
+    private final UserService userService;
+
+    private final UserRepository userRepository;
+
+    public UserController(UserService userService, UserRepository userRepository) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
 
     private static boolean checkPasswordLength(String password) {
         return (

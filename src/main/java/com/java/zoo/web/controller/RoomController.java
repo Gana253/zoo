@@ -1,7 +1,6 @@
 package com.java.zoo.web.controller;
 
 
-import com.java.zoo.dto.AnimalsJsonObject;
 import com.java.zoo.entity.Room;
 import com.java.zoo.exception.BadRequestAlertException;
 import com.java.zoo.repository.RoomRepository;
@@ -67,10 +66,9 @@ public class RoomController {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated room,
      * or with status {@code 400 (Bad Request)} if the room is not valid,
      * or with status {@code 500 (Internal Server Error)} if the room couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/rooms")
-    public ResponseEntity<Room> updateRoom(@Valid @RequestBody Room room) throws URISyntaxException {
+    public ResponseEntity<Room> updateRoom(@Valid @RequestBody Room room) {
         log.debug("REST request to update Room : {}", room);
         if (room.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

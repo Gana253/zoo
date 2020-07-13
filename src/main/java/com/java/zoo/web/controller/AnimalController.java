@@ -2,6 +2,7 @@ package com.java.zoo.web.controller;
 
 
 import com.java.zoo.dto.AnimalsJsonObject;
+import com.java.zoo.dto.HappyAnimalsJsonObject;
 import com.java.zoo.entity.Animal;
 import com.java.zoo.exception.BadRequestAlertException;
 import com.java.zoo.repository.AnimalRepository;
@@ -117,7 +118,7 @@ public class AnimalController {
     }
 
     /**
-     * {@code GET  /animals/without} : get the List of animals which is not assigned with room.
+     * {@code GET  /animals/withoutroom} : get the List of animals which is not assigned with room.
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of animals.
      */
@@ -128,15 +129,28 @@ public class AnimalController {
     }
 
 
-
     /**
-     * {@code GET  /rooms} : get all the rooms.
+     * {@code GET  animals/room/{roomId}} : get all animals in the room.
      *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rooms in body.
+     * @param roomId the id of the room.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Animals in body.
      */
     @GetMapping("/animals/room/{roomId}")
     public List<AnimalsJsonObject> getAllAnimalsInRoom(@PathVariable Long roomId) {
-        log.debug("REST request to get all Rooms");
+        log.debug("REST request to get all animals in the Room: {}",roomId);
         return animalRepository.findAllByRoom_IdEqualsOrderByLocatedDesc(roomId);
     }
+
+    /**
+     * {@code GET  /animals/happyanimals} : get all Happy animals in the rooms.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of happy animals in the rooms in body.
+     */
+    @GetMapping("/animals/happyanimals")
+    public List<HappyAnimalsJsonObject> getAllHappyAnimalsInRoom() {
+        log.debug("REST request to get all happy animals in the Rooms");
+        return animalRepository.findAllHappyAnimals();
+    }
+
+
 }

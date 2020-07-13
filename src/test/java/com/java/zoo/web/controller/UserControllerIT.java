@@ -90,6 +90,7 @@ public class UserControllerIT {
 
     @BeforeEach
     public void initTest() {
+
         userRepository.deleteAll();
         user = createEntity();
     }
@@ -401,6 +402,7 @@ public class UserControllerIT {
                 .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-wrong-existing-password").orElse(null);
+        assert updatedUser != null;
         assertThat(passwordEncoder.matches("new password", updatedUser.getPassword())).isFalse();
         assertThat(passwordEncoder.matches(currentPassword, updatedUser.getPassword())).isTrue();
     }
@@ -426,6 +428,7 @@ public class UserControllerIT {
                 .andExpect(status().isOk());
 
         User updatedUser = userRepository.findOneByLogin("change-password").orElse(null);
+        assert updatedUser != null;
         assertThat(passwordEncoder.matches("new password", updatedUser.getPassword())).isTrue();
     }
 
@@ -452,6 +455,7 @@ public class UserControllerIT {
                 .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-too-small").orElse(null);
+        assert updatedUser != null;
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
     }
 
@@ -478,6 +482,7 @@ public class UserControllerIT {
                 .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-too-long").orElse(null);
+        assert updatedUser != null;
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
     }
 
@@ -502,6 +507,7 @@ public class UserControllerIT {
                 .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-empty").orElse(null);
+        assert updatedUser != null;
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
     }
 

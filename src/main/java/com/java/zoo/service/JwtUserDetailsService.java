@@ -3,16 +3,15 @@ package com.java.zoo.service;
 
 import com.java.zoo.entity.User;
 import com.java.zoo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Authenticate a user from the database.
@@ -20,8 +19,12 @@ import java.util.stream.Collectors;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+    public JwtUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -34,7 +37,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(username)
                 .password(user.get().getPassword())
-                .authorities(Arrays.asList("ROLE_ADMIN", "ROLE_USER").stream()
+                .authorities(Stream.of("ROLE_ADMIN", "ROLE_USER")
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList()))
                 .accountExpired(false)

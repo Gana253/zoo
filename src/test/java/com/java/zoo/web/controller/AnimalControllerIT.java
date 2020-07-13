@@ -1,18 +1,20 @@
 package com.java.zoo.web.controller;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.java.zoo.ZooApplication;
+import com.java.zoo.dto.InputRequest;
 import com.java.zoo.entity.Animal;
 import com.java.zoo.repository.AnimalRepository;
 import com.java.zoo.web.util.TestUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ZooApplication.class)
 @AutoConfigureMockMvc
 @WithMockUser
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AnimalControllerIT {
 
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
@@ -54,6 +57,9 @@ public class AnimalControllerIT {
     @Autowired
     private MockMvc restAnimalMockMvc;
 
+    @Autowired
+    private MockMvc restZooMockMvc;
+
     private Animal animal;
 
     /**
@@ -62,7 +68,7 @@ public class AnimalControllerIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Animal createEntity(EntityManager em) {
+    public static Animal createEntity() {
         Animal animal = new Animal();
         animal.setTitle(DEFAULT_TITLE);
         animal.setLocated(DEFAULT_LOCATED);
@@ -74,7 +80,7 @@ public class AnimalControllerIT {
 
     @BeforeEach
     public void initTest() {
-        animal = createEntity(em);
+        animal = createEntity();
     }
 
     @Test
@@ -224,4 +230,70 @@ public class AnimalControllerIT {
         List<Animal> animalList = animalRepository.findAll();
         assertThat(animalList).hasSize(databaseSizeBeforeDelete - 1);
     }
+    @Test
+    @Transactional
+    public void getAnimalsWithoutRoom() throws Exception {
+
+        int databaseSizeOfAnimalWihtoutRoom = animalRepository.findAllByRoomIsNullOrderByLocatedDesc().size();
+
+        // Get Animals Without Room
+        MvcResult result =restAnimalMockMvc.perform(get("/api/animals/withoutroom")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode node = TestUtil.mapper.readTree(result.getResponse().getContentAsString());
+        assertThat(databaseSizeOfAnimalWihtoutRoom).isEqualTo(node.size());
+    }
+
+    @Test
+    @Transactional
+    @Order(1)
+    public void getAnimalsInTheRoom() throws Exception {
+        InputRequest inputRequest = new InputRequest(52L, 2L);
+        // Place Animal in the room and expect status 200
+        restZooMockMvc.perform(put("/api/animal/place")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isOk());
+
+        InputRequest inputRequest1 = new InputRequest(53L, 2L);
+        // Place Animal in the room and expect status 200
+        restZooMockMvc.perform(put("/api/animal/place")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest1)))
+                .andExpect(status().isOk());
+        // Get Animals Without Room
+        MvcResult result =restAnimalMockMvc.perform(get("/api/animals/room/2")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode node = TestUtil.mapper.readTree(result.getResponse().getContentAsString());
+        assertThat(2).isEqualTo(node.size());
+    }
+
+    @Test
+    @Transactional
+    @Order(2)
+    public void getHappyAnimals() throws Exception {
+        InputRequest inputRequest = new InputRequest(52L, 3L);
+        // Place Animal in the room and expect status 200
+        restZooMockMvc.perform(put("/api/animal/move")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isOk());
+        // Get Happy Animals in each room
+        restAnimalMockMvc.perform(get("/api/animals/happyanimals")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].happyAnimals").value(1))
+                .andExpect(jsonPath("$.[0].roomtitle").value("blue"))
+                .andExpect(jsonPath("$.[1].happyAnimals").value(0))
+                .andExpect(jsonPath("$.[1].roomtitle").value("yellow"))
+                .andReturn();
+
+    }
+
+
 }

@@ -43,7 +43,7 @@ public class Room implements Serializable {
     private Long size;
 
     @Column(name = "created")
-    private Instant created = Instant.now();
+    private Instant created;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")

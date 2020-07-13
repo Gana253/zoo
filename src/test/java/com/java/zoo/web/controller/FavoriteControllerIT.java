@@ -1,7 +1,8 @@
 package com.java.zoo.web.controller;
 
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.java.zoo.ZooApplication;
+import com.java.zoo.dto.InputRequest;
 import com.java.zoo.entity.Favorite;
 import com.java.zoo.repository.FavoriteRepository;
 import com.java.zoo.web.util.TestUtil;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -34,9 +36,6 @@ public class FavoriteControllerIT {
     private static final Long DEFAULT_ROOM_ID = 1L;
     private static final Long UPDATED_ROOM_ID = 2L;
 
-    private static final Long DEFAULT_ANIMAL_ID = 1L;
-    private static final Long UPDATED_ANIMAL_ID = 2L;
-
     @Autowired
     private FavoriteRepository favoriteRepository;
 
@@ -46,18 +45,20 @@ public class FavoriteControllerIT {
     @Autowired
     private MockMvc restFavoriteMockMvc;
 
+    @Autowired
+    private MockMvc restZooMockMvc;
+
     private Favorite favorite;
 
     /**
      * Create an entity for this test.
-     * <p>
+     *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
     public static Favorite createEntity(EntityManager em) {
         Favorite favorite = new Favorite();
         favorite.setRoomId(DEFAULT_ROOM_ID);
-        // favorite.setAnimalId(DEFAULT_ANIMAL_ID);
         return favorite;
     }
 
@@ -81,7 +82,6 @@ public class FavoriteControllerIT {
         assertThat(favoriteList).hasSize(databaseSizeBeforeCreate + 1);
         Favorite testFavorite = favoriteList.get(favoriteList.size() - 1);
         assertThat(testFavorite.getRoomId()).isEqualTo(DEFAULT_ROOM_ID);
-        // assertThat(testFavorite.getAnimalId()).isEqualTo(DEFAULT_ANIMAL_ID);
     }
 
     @Test
@@ -115,8 +115,7 @@ public class FavoriteControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(favorite.getId().intValue())))
-                .andExpect(jsonPath("$.[*].roomId").value(hasItem(DEFAULT_ROOM_ID.intValue())))
-                .andExpect(jsonPath("$.[*].animalId").value(hasItem(DEFAULT_ANIMAL_ID.intValue())));
+                .andExpect(jsonPath("$.[*].roomId").value(hasItem(DEFAULT_ROOM_ID.intValue())));
     }
 
     @Test
@@ -130,10 +129,8 @@ public class FavoriteControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").value(favorite.getId().intValue()))
-                .andExpect(jsonPath("$.roomId").value(DEFAULT_ROOM_ID.intValue()))
-                .andExpect(jsonPath("$.animalId").value(DEFAULT_ANIMAL_ID.intValue()));
+                .andExpect(jsonPath("$.roomId").value(DEFAULT_ROOM_ID.intValue()));
     }
-
     @Test
     @Transactional
     public void getNonExistingFavorite() throws Exception {
@@ -154,9 +151,7 @@ public class FavoriteControllerIT {
         Favorite updatedFavorite = favoriteRepository.findById(favorite.getId()).get();
         // Disconnect from session so that the updates on updatedFavorite are not directly saved in db
         em.detach(updatedFavorite);
-
         updatedFavorite.setRoomId(UPDATED_ROOM_ID);
-        // updatedFavorite.setAnimalId(UPDATED_ANIMAL_ID);
 
         restFavoriteMockMvc.perform(put("/api/favorites")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -168,7 +163,6 @@ public class FavoriteControllerIT {
         assertThat(favoriteList).hasSize(databaseSizeBeforeUpdate);
         Favorite testFavorite = favoriteList.get(favoriteList.size() - 1);
         assertThat(testFavorite.getRoomId()).isEqualTo(UPDATED_ROOM_ID);
-        //assertThat(testFavorite.getAnimalId()).isEqualTo(UPDATED_ANIMAL_ID);
     }
 
     @Test
@@ -203,5 +197,30 @@ public class FavoriteControllerIT {
         // Validate the database contains one less item
         List<Favorite> favoriteList = favoriteRepository.findAll();
         assertThat(favoriteList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void getAllFavoriteRoomId() throws Exception {
+        InputRequest inputRequest = new InputRequest(52L, 2L);
+        // assign room as favorite for the given animal and expect status 200
+        restZooMockMvc.perform(put("/api/favorite/assign")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isOk());
+
+        InputRequest inputRequest1 = new InputRequest(52L, 3L);
+        // assign room as favorite for the given animal and expect status 200
+        restZooMockMvc.perform(put("/api/favorite/assign")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest1)))
+                .andExpect(status().isOk());
+        // Get the favorite
+        MvcResult result =restFavoriteMockMvc.perform(get("/api/favorites/room/52")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode node = TestUtil.mapper.readTree(result.getResponse().getContentAsString());
+        assertThat(2).isEqualTo(node.size());
     }
 }

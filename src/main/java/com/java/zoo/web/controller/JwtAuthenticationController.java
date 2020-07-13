@@ -4,7 +4,6 @@ package com.java.zoo.web.controller;
 import com.java.zoo.dto.JwtRequest;
 import com.java.zoo.exception.BadRequestAlertException;
 import com.java.zoo.security.JwtTokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,12 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
 
+    private final JwtTokenUtil jwtTokenUtil;
+
+    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     /**
      * {@code POST  /JwtRequest} : Authorize the user.

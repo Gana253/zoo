@@ -38,7 +38,7 @@ public class Animal implements Serializable {
     private String title;
 
     @Column(name = "located")
-    private Instant located = Instant.now();
+    private Instant located;
     ;
 
     @Column(name = "type")

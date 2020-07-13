@@ -4,13 +4,11 @@ package com.java.zoo.service;
 import com.java.zoo.constants.Constants;
 import com.java.zoo.dto.UserDTO;
 import com.java.zoo.entity.Animal;
-import com.java.zoo.entity.Favorite;
 import com.java.zoo.entity.Room;
 import com.java.zoo.repository.AnimalRepository;
 import com.java.zoo.repository.RoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -35,11 +31,16 @@ public class CommandLineService {
     private static final Logger log = LoggerFactory.getLogger(CommandLineService.class);
 
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+
+
+    private final RoomRepository roomRepository;
+
+
+    private final AnimalRepository animalRepository;
 
     @Value("${inputfile.user-name}")
     private String userFilePath;
@@ -50,11 +51,13 @@ public class CommandLineService {
     @Value("${inputfile.animal-name}")
     private String animalFilePath;
 
-    @Autowired
-    private RoomRepository roomRepository;
 
-    @Autowired
-    private AnimalRepository animalRepository;
+    public CommandLineService(ResourceLoader resourceLoader, UserService userService, RoomRepository roomRepository, AnimalRepository animalRepository) {
+        this.resourceLoader = resourceLoader;
+        this.userService = userService;
+        this.roomRepository = roomRepository;
+        this.animalRepository = animalRepository;
+    }
 
     /**
      * Load User data on startup
@@ -97,7 +100,7 @@ public class CommandLineService {
                                 break;
                         }
                     }
-                   Set<Favorite> favorites = new HashSet<>();
+                /*    Set<Favorite> favorites = new HashSet<>();
                     List<Room> matchingRooms;
                     if (animal.getType().equals(">=")) {
                         matchingRooms = roomRepository.findAllBySizeGreaterThanEqualOrderBySizeAsc(animal.getPreference());
@@ -111,7 +114,7 @@ public class CommandLineService {
                         favorites.add(favorite);
                     });
 
-                    animal.setFavorites(favorites);
+                    animal.setFavorites(favorites);*/
                     log.debug("Animal object to be stored --{}", animal.toString());
                     animalRepository.save(animal);
                     //updateRoom(animal, matchingRooms);
@@ -142,13 +145,10 @@ public class CommandLineService {
                 stream.skip(1).map(line -> line.split(COMMA)).forEach(data -> {
                     Room room = new Room();
                     for (int i = 0; i < data.length; i++) {
-                        switch (i) {
-                            case 0:
-                                room.setTitle(data[i].toLowerCase());
-                                break;
-                            default:
-                                room.setSize(Long.parseLong(data[i]));
-                                break;
+                        if (i == 0) {
+                            room.setTitle(data[i].toLowerCase());
+                        } else {
+                            room.setSize(Long.parseLong(data[i]));
                         }
                     }
                     log.debug("Room object to be stored --{}", room.toString());

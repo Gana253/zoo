@@ -24,6 +24,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class ZooController {
+    public static final String ANIMAL = "Animal";
     private final Logger log = LoggerFactory.getLogger(ZooController.class);
 
     @Value("${spring.application.name}")
@@ -47,11 +48,11 @@ public class ZooController {
     /**
      * {@code PUT  /animal/place}  : Place animal in room
      * <p>
-     * Places the animal into the room based on the preference. If not it will be placed in the room whichever is available
+     * Places the animal into the room based on the preference.
      *
      * @param inputRequest the animal id /room id to be placed .
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated room, or with status {@code 400 (Bad Request)} if the animal id is null  or for the given id animal is not available.
-     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal id is null  or for the given id animal is not available.
+     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated room, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
     @PutMapping("/animal/place")
     public ResponseEntity<Room> placeAnimal(@Valid @RequestBody InputRequest inputRequest) {
@@ -59,7 +60,7 @@ public class ZooController {
 
         String requestType = "Place Animal";
         Animal animal = validateAnimalId(inputRequest.getAnimalId(), requestType);
-        Room room = validateRoomId(inputRequest.getToRoomId(), requestType);
+        Room room = validateRoomId(inputRequest.getRoomId(), requestType);
         zooService.placeAnimal(animal, room);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, "Animal", animal.getId().toString()))
@@ -73,12 +74,11 @@ public class ZooController {
      * {@code PUT  /animal/move}  : move animal from one room to another
      * <p>
      * Move the animal from the existing room to the new one.
-     * If user passes the roomid to which the animal to be moved, it will be moved accordingly
-     * Else based on the preferences animal will be moved to new room
+     * If user passes the valid roomid to which the animal to be moved, it will be moved accordingly
      *
      * @param inputRequest the animal to be moved.
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated room, or with status {@code 400 (Bad Request)} if the animal id is null  or for the given id animal is not available.
-     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal id is null  or for the given id animal is not available.
+     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated room, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
     @PutMapping("/animal/move")
     public ResponseEntity<Room> moveAnimal(@Valid @RequestBody InputRequest inputRequest) {
@@ -86,7 +86,7 @@ public class ZooController {
 
         String requestType = "Move Animal";
         Animal animal = validateAnimalId(inputRequest.getAnimalId(), requestType);
-        Room room = validateRoomId(inputRequest.getToRoomId(), requestType);
+        Room room = validateRoomId(inputRequest.getRoomId(), requestType);
         zooService.moveAnimal(animal, room);
 
         return ResponseEntity.ok()
@@ -101,6 +101,7 @@ public class ZooController {
      *
      * @param animalId the animal to be removed from the room.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animalid is not available in DB.
      */
     @DeleteMapping("/animal/delete/{animalId}")
     public ResponseEntity<Void> deleteAnimal(@PathVariable String animalId) {
@@ -120,8 +121,8 @@ public class ZooController {
      * Assign the room as favorite for given animal
      *
      * @param inputRequest the animal & room to be assigned as favorite.
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal id/room id is null  or for the given id animal/room is not available.
-     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal id/room id is null  or for the given id animal/room is not available.
+     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
     @PutMapping("/favorite/assign")
     public ResponseEntity<Animal> assignFavorite(@Valid @RequestBody InputRequest inputRequest) {
@@ -129,7 +130,7 @@ public class ZooController {
 
         String requestType = "Assign Favorite Room";
         Animal animal = validateAnimalId(inputRequest.getAnimalId(), requestType);
-        Room room = validateRoomId(inputRequest.getToRoomId(), requestType);
+        Room room = validateRoomId(inputRequest.getRoomId(), requestType);
         zooService.assignFavoriteRoom(animal, room);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, "Animal", animal.getId().toString()))
@@ -139,13 +140,13 @@ public class ZooController {
     }
 
     /**
-     * {@code PUT  /favorite/assign}  : unassign room as favorite for animal
+     * {@code PUT  /favorite/unassign}  : unassign room as favorite for animal
      * <p>
      * UnAssign the room as favorite for given animal
      *
      * @param inputRequest the animal & room to be assigned as favorite.
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal id/room id is null  or for the given id animal/room is not available.
-     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal id/room id is null  or for the given id animal/room is not available.
+     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @throws BadRequestAlertException {@code 400 (Bad Request)}if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
     @PutMapping("/favorite/unassign")
     public ResponseEntity<Animal> unassignFavorite(@Valid @RequestBody InputRequest inputRequest) {
@@ -153,10 +154,10 @@ public class ZooController {
 
         String requestType = "UnAssign Favorite Room";
         Animal animal = validateAnimalId(inputRequest.getAnimalId(), requestType);
-        Room room = validateRoomId(inputRequest.getToRoomId(), requestType);
+        Room room = validateRoomId(inputRequest.getRoomId(), requestType);
         zooService.unassignFavoriteRoom(animal, room);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, "Animal", animal.getId().toString()))
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ANIMAL, animal.getId().toString()))
                 .body(animal);
     }
 
