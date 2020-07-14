@@ -35,13 +35,10 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class UserController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
-
+    private final UserService userService;
+    private final UserRepository userRepository;
     @Value("${spring.application.name}")
     private String applicationName;
-
-    private final UserService userService;
-
-    private final UserRepository userRepository;
 
     public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;

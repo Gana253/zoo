@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -48,7 +48,7 @@ public class ZooControllerIT {
     public void placeAnimal() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 1L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(put("/api/animal/place")
+        restZooMockMvc.perform(post("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -60,12 +60,25 @@ public class ZooControllerIT {
 
     @Test
     @Transactional
+    @Order(2)
+    public void placeAnimalInRoomAgain() throws Exception {
+        InputRequest inputRequest = new InputRequest(52L, 2L);
+        // Place Animal in the room and expect status 200
+        restZooMockMvc.perform(post("/api/animal/place")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @Transactional
     public void placeAnimalWithInvalidAnimalId() throws Exception {
         InputRequest inputRequest = new InputRequest();
         inputRequest.setAnimalId(0L);
         inputRequest.setRoomId(1L);
         // Place Animal in the room with invalid animal id  and expect status 404
-        restZooMockMvc.perform(put("/api/animal/place")
+        restZooMockMvc.perform(post("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -76,7 +89,7 @@ public class ZooControllerIT {
     public void placeAnimalWithInvalidRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 0L);
         // Place Animal in the room with invalid room id  and expect status 404
-        restZooMockMvc.perform(put("/api/animal/place")
+        restZooMockMvc.perform(post("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -85,11 +98,11 @@ public class ZooControllerIT {
 
     @Test
     @Transactional
-    @Order(2)
+    @Order(3)
     public void moveAnimal() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 2L);
         // Move Animal from existing room to the other and expect status 200
-        restZooMockMvc.perform(put("/api/animal/move")
+        restZooMockMvc.perform(post("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -103,7 +116,7 @@ public class ZooControllerIT {
     public void moveAnimalWithInvalidAnimalId() throws Exception {
         InputRequest inputRequest = new InputRequest(0L, 1L);
         // Move Animal in the room with invalid animal id  and expect status 404
-        restZooMockMvc.perform(put("/api/animal/move")
+        restZooMockMvc.perform(post("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -114,7 +127,7 @@ public class ZooControllerIT {
     public void moveAnimalWithInvalidRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 0L);
         // Move Animal in the room with invalid room id  and expect status 404
-        restZooMockMvc.perform(put("/api/animal/move")
+        restZooMockMvc.perform(post("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -122,11 +135,11 @@ public class ZooControllerIT {
 
     @Test
     @Transactional
-    @Order(3)
+    @Order(4)
     public void placeAnotherAnimal() throws Exception {
         InputRequest inputRequest = new InputRequest(53L, 2L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(put("/api/animal/place")
+        restZooMockMvc.perform(post("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -138,13 +151,13 @@ public class ZooControllerIT {
 
     @Test
     @Transactional
-    @Order(4)
-    public void deleteAnimalFromRoom() throws Exception {
+    @Order(5)
+    public void removeAnimalFromRoom() throws Exception {
         Optional<Animal> animal = animalRepository.findById(53L);
 
         assertThat(animal.get().getRoom()).isNotNull();
         // delete Animal from the room associated and expect status 204
-        restZooMockMvc.perform(delete("/api/animal/delete/{id}", 53)
+        restZooMockMvc.perform(delete("/api/animal/remove/{id}", 53)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
@@ -159,20 +172,20 @@ public class ZooControllerIT {
 
     @Test
     @Transactional
-    public void deleteAnimalFromRoomWithInvalidId() throws Exception {
+    public void removeAnimalFromRoomWithInvalidId() throws Exception {
         // throw bad request exception 404
-        restZooMockMvc.perform(delete("/api/animal/delete/{id}", 0)
+        restZooMockMvc.perform(delete("/api/animal/remove/{id}", 0)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @Transactional
-    @Order(5)
+    @Order(6)
     public void assignFavorite() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 2L);
         // assign room as favorite for the given animal and expect status 200
-        restZooMockMvc.perform(put("/api/favorite/assign")
+        restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -186,7 +199,7 @@ public class ZooControllerIT {
     public void assignFavoriteWithInvalidAnimalId() throws Exception {
         InputRequest inputRequest = new InputRequest(0L, 1L);
         // assign room as favorite with invalid animal id  and expect status 404
-        restZooMockMvc.perform(put("/api/favorite/assign")
+        restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -197,20 +210,31 @@ public class ZooControllerIT {
     public void assignFavoriteWithInvalidRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 0L);
         // assign room as favorite with invalid room id  and expect status 404
-        restZooMockMvc.perform(put("/api/favorite/assign")
+        restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @Transactional
+    @Order(7)
+    public void assignFavoriteSameRoomAgainForAnimal() throws Exception {
+        InputRequest inputRequest = new InputRequest(52L, 2L);
+        // assign room as favorite for the given animal and expect status 200
+        restZooMockMvc.perform(post("/api/favorite/assign")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isBadRequest());
+    }
 
     @Test
     @Transactional
-    @Order(6)
+    @Order(8)
     public void unAssignFavorite() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 2L);
         // unassign room as favorite for the given animal and expect status 200
-        restZooMockMvc.perform(put("/api/favorite/unassign")
+        restZooMockMvc.perform(delete("/api/favorite/unassign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -223,7 +247,7 @@ public class ZooControllerIT {
     public void unAssignFavoriteWithInvalidAnimalId() throws Exception {
         InputRequest inputRequest = new InputRequest(0L, 1L);
         // unassign room as favorite with invalid animal id  and expect status 404
-        restZooMockMvc.perform(put("/api/favorite/unassign")
+        restZooMockMvc.perform(delete("/api/favorite/unassign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -234,7 +258,7 @@ public class ZooControllerIT {
     public void unAssignFavoriteWithInvalidRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 0L);
         // unassign room as favorite with invalid room id  and expect status 404
-        restZooMockMvc.perform(put("/api/favorite/unassign")
+        restZooMockMvc.perform(delete("/api/favorite/unassign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());

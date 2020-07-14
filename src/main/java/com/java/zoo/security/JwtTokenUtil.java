@@ -26,13 +26,10 @@ import java.util.Date;
 @Component
 public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -2550185165626007488L;
-
+    @Value("${security.jwt.token.expire-length:3600000}")
+    private static final long validityInMilliseconds = 3600000; // 1h
     @Value("${jwt.secret-key}")
     private String secretKey;
-
-    @Value("${security.jwt.token.expire-length:3600000}")
-    private final long validityInMilliseconds = 3600000; // 1h
-
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 

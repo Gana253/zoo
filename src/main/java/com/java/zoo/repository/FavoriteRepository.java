@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    Favorite findByRoomIdAndAnimalId(Long roomId,Long animalId);
+    Favorite findByRoomIdAndAnimalId(Long roomId, Long animalId);
 
     @Query(value = "select  r.title from Room r,  Favorite f where f.animal.id = ?1 and r.id = f.roomId")
     List<String> findFavoriteRooms(Long animalId);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Spring Data Cassandra repository for the User entity.
+ * Spring Data mysql repository for the User entity.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

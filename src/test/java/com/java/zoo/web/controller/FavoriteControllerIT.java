@@ -52,7 +52,7 @@ public class FavoriteControllerIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -131,6 +131,7 @@ public class FavoriteControllerIT {
                 .andExpect(jsonPath("$.id").value(favorite.getId().intValue()))
                 .andExpect(jsonPath("$.roomId").value(DEFAULT_ROOM_ID.intValue()));
     }
+
     @Test
     @Transactional
     public void getNonExistingFavorite() throws Exception {
@@ -204,19 +205,19 @@ public class FavoriteControllerIT {
     public void getAllFavoriteRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 2L);
         // assign room as favorite for the given animal and expect status 200
-        restZooMockMvc.perform(put("/api/favorite/assign")
+        restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk());
 
         InputRequest inputRequest1 = new InputRequest(52L, 3L);
         // assign room as favorite for the given animal and expect status 200
-        restZooMockMvc.perform(put("/api/favorite/assign")
+        restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest1)))
                 .andExpect(status().isOk());
         // Get the favorite
-        MvcResult result =restFavoriteMockMvc.perform(get("/api/favorites/room/52")
+        MvcResult result = restFavoriteMockMvc.perform(get("/api/favorites/room/52")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();

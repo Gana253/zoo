@@ -15,6 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class TestUtil {
     public static final ObjectMapper mapper = createObjectMapper();
 
+    private TestUtil() {
+    }
+
     private static ObjectMapper createObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false);
@@ -50,8 +53,5 @@ public final class TestUtil {
         T domainObject2 = clazz.getConstructor().newInstance();
         // HashCodes are equals because the objects are not persisted yet
         assertThat(domainObject1.hashCode()).isEqualTo(domainObject2.hashCode());
-    }
-
-    private TestUtil() {
     }
 }

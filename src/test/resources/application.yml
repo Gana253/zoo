@@ -1,0 +1,43 @@
+server:
+  port: 5678
+
+jwt:
+  secret-key: XkkTy12
+
+inputfile:
+  user-name: classpath:dataset/user.csv
+  room-name: classpath:dataset/room.csv
+  animal-name: classpath:dataset/animal.csv
+
+load:
+  default-data: true
+
+
+spring:
+  application:
+    name: zoo
+    datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      hibernate.jdbc.time_zone: UTC
+      hibernate.enable_lazy_load_no_trans: false
+    database: h2
+logging:
+  level:
+    root: INFO
+  file:
+    path: logs/
+    name: logs/zoo.log

@@ -35,7 +35,7 @@ public class Room implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", unique = true, nullable = false, length = 50)
     private String title;
 
     @Min(value = 0L)

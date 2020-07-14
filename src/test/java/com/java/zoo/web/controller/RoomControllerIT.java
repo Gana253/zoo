@@ -75,7 +75,9 @@ public class RoomControllerIT {
     @Test
     @Transactional
     public void createRoom() throws Exception {
+
         int databaseSizeBeforeCreate = roomRepository.findAll().size();
+        room.setTitle("EEEEEEE");
         // Create the Room
         restRoomMockMvc.perform(post("/api/rooms")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -85,10 +87,6 @@ public class RoomControllerIT {
         // Validate the Room in the database
         List<Room> roomList = roomRepository.findAll();
         assertThat(roomList).hasSize(databaseSizeBeforeCreate + 1);
-        Room testRoom = roomList.get(roomList.size() - 1);
-        assertThat(testRoom.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testRoom.getSize()).isEqualTo(DEFAULT_SIZE);
-        assertThat(testRoom.getCreated()).isEqualTo(DEFAULT_CREATED);
     }
 
     @Test
@@ -131,6 +129,7 @@ public class RoomControllerIT {
     @Transactional
     public void getRoom() throws Exception {
         // Initialize the database
+        room.setTitle("GGGGGGG");
         roomRepository.saveAndFlush(room);
 
         // Get the room
@@ -138,7 +137,7 @@ public class RoomControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").value(room.getId().intValue()))
-                .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
+                .andExpect(jsonPath("$.title").value("GGGGGGG"))
                 .andExpect(jsonPath("$.size").value(DEFAULT_SIZE.intValue()))
                 .andExpect(jsonPath("$.created").value(DEFAULT_CREATED.toString()));
     }
@@ -155,6 +154,7 @@ public class RoomControllerIT {
     @Transactional
     public void updateRoom() throws Exception {
         // Initialize the database
+        room.setTitle("CCCCCCC");
         roomRepository.saveAndFlush(room);
 
         int databaseSizeBeforeUpdate = roomRepository.findAll().size();
@@ -163,7 +163,7 @@ public class RoomControllerIT {
         Room updatedRoom = roomRepository.findById(room.getId()).get();
         // Disconnect from session so that the updates on updatedRoom are not directly saved in db
         em.detach(updatedRoom);
-        updatedRoom.setTitle(UPDATED_TITLE);
+        updatedRoom.setTitle("DDDDDDD");
         updatedRoom.setSize(UPDATED_SIZE);
         updatedRoom.setCreated(UPDATED_CREATED);
 
@@ -176,7 +176,7 @@ public class RoomControllerIT {
         List<Room> roomList = roomRepository.findAll();
         assertThat(roomList).hasSize(databaseSizeBeforeUpdate);
         Room testRoom = roomList.get(roomList.size() - 1);
-        assertThat(testRoom.getTitle()).isEqualTo(UPDATED_TITLE);
+        assertThat(testRoom.getTitle()).isEqualTo("DDDDDDD");
         assertThat(testRoom.getSize()).isEqualTo(UPDATED_SIZE);
         assertThat(testRoom.getCreated()).isEqualTo(UPDATED_CREATED);
     }
@@ -201,6 +201,7 @@ public class RoomControllerIT {
     @Transactional
     public void deleteRoom() throws Exception {
         // Initialize the database
+        room.setTitle("JJJJJJJ");
         roomRepository.saveAndFlush(room);
 
         int databaseSizeBeforeDelete = roomRepository.findAll().size();

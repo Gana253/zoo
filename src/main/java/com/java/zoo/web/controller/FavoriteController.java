@@ -25,14 +25,11 @@ import java.util.Optional;
 @Transactional
 public class FavoriteController {
 
-    private final Logger log = LoggerFactory.getLogger(FavoriteController.class);
-
     private static final String ENTITY_NAME = "favorite";
-
+    private final Logger log = LoggerFactory.getLogger(FavoriteController.class);
+    private final FavoriteRepository favoriteRepository;
     @Value("${spring.application.name}")
     private String applicationName;
-
-    private final FavoriteRepository favoriteRepository;
 
     public FavoriteController(FavoriteRepository favoriteRepository) {
         this.favoriteRepository = favoriteRepository;
@@ -122,7 +119,7 @@ public class FavoriteController {
      */
     @GetMapping("/favorites/room/{animalId}")
     public List<String> getAllFavoritesRoomForAnimal(@PathVariable Long animalId) {
-        log.debug("REST request to get all Favorite rooms for given animal id:{}",animalId);
+        log.debug("REST request to get all Favorite rooms for given animal id:{}", animalId);
         return favoriteRepository.findFavoriteRooms(animalId);
     }
 }

@@ -1,6 +1,7 @@
 package com.java.zoo.web.controller;
 
 
+import com.java.zoo.constants.Constants;
 import com.java.zoo.dto.AnimalsJsonObject;
 import com.java.zoo.dto.HappyAnimalsJsonObject;
 import com.java.zoo.entity.Animal;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +31,9 @@ import java.util.Optional;
 public class AnimalController {
 
     private final Logger log = LoggerFactory.getLogger(AnimalController.class);
-
-    private static final String ENTITY_NAME = "animal";
-
+    private final AnimalRepository animalRepository;
     @Value("${spring.application.name}")
     private String applicationName;
-
-    private final AnimalRepository animalRepository;
 
     public AnimalController(AnimalRepository animalRepository) {
         this.animalRepository = animalRepository;
@@ -52,11 +50,12 @@ public class AnimalController {
     public ResponseEntity<Animal> createAnimal(@RequestBody Animal animal) throws URISyntaxException {
         log.debug("REST request to save Animal : {}", animal);
         if (animal.getId() != null) {
-            throw new BadRequestAlertException("A new animal cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new animal cannot already have an ID", Constants.ANIMAL_ENTITY_NAME, "idexists");
         }
+        if (null == animal.getLocated()) animal.setLocated(Instant.now());
         Animal result = animalRepository.save(animal);
         return ResponseEntity.created(new URI("/api/animals/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, result.getId().toString()))
                 .body(result);
     }
 
@@ -72,11 +71,11 @@ public class AnimalController {
     public ResponseEntity<Animal> updateAnimal(@RequestBody Animal animal) {
         log.debug("REST request to update Animal : {}", animal);
         if (animal.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("Invalid id", Constants.ANIMAL_ENTITY_NAME, "idnull");
         }
         Animal result = animalRepository.save(animal);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, animal.getId().toString()))
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, animal.getId().toString()))
                 .body(result);
     }
 
@@ -114,7 +113,7 @@ public class AnimalController {
     public ResponseEntity<Void> deleteAnimal(@PathVariable Long id) {
         log.debug("REST request to delete Animal : {}", id);
         animalRepository.deleteById(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, id.toString())).build();
     }
 
     /**
@@ -137,7 +136,7 @@ public class AnimalController {
      */
     @GetMapping("/animals/room/{roomId}")
     public List<AnimalsJsonObject> getAllAnimalsInRoom(@PathVariable Long roomId) {
-        log.debug("REST request to get all animals in the Room: {}",roomId);
+        log.debug("REST request to get all animals in the Room: {}", roomId);
         return animalRepository.findAllByRoom_IdEqualsOrderByLocatedDesc(roomId);
     }
 

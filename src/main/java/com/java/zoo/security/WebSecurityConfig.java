@@ -33,8 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()//
                 .antMatchers("/authenticate").permitAll()//To authorize the user
 
-        // Disallow everything else..
-               .anyRequest().authenticated();
+                // Disallow everything else..
+                .anyRequest().authenticated();
 
         // Apply JWT
         http.apply(new JwtTokenFilterConfigurer(jwtTokenUtil));

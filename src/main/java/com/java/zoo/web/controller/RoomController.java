@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,14 +28,11 @@ import java.util.Optional;
 @Transactional
 public class RoomController {
 
-    private final Logger log = LoggerFactory.getLogger(RoomController.class);
-
     private static final String ENTITY_NAME = "room";
-
+    private final Logger log = LoggerFactory.getLogger(RoomController.class);
+    private final RoomRepository roomRepository;
     @Value("${spring.application.name}")
     private String applicationName;
-
-    private final RoomRepository roomRepository;
 
     public RoomController(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
@@ -53,6 +51,7 @@ public class RoomController {
         if (room.getId() != null) {
             throw new BadRequestAlertException("A new room cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if (null == room.getCreated()) room.setCreated(Instant.now());
         Room result = roomRepository.save(room);
         return ResponseEntity.created(new URI("/api/rooms/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))

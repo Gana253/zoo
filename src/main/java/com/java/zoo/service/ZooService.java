@@ -61,6 +61,7 @@ public class ZooService {
         Favorite fav = favoriteRepository.findByRoomIdAndAnimalId(room.getId(), animal.getId());
         animal.getFavorites().remove(fav);
         animalRepository.saveAndFlush(animal);
+        favoriteRepository.deleteById(fav.getId());
     }
 
     private void removeAssociatedAnimalAndSave(Animal animal) {

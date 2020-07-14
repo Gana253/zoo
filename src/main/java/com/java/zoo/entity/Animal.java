@@ -34,12 +34,12 @@ public class Animal implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", unique = true, nullable = false, length = 50)
     private String title;
 
     @Column(name = "located")
     private Instant located;
-    ;
+
 
     @Column(name = "type")
     private String type;

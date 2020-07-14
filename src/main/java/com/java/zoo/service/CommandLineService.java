@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -27,10 +28,8 @@ import java.util.stream.Stream;
 public class CommandLineService {
 
     public static final String COMMA = ";";
-
+    public static final String ERROR_OCCURRED = "Error Occurred -> {}";
     private static final Logger log = LoggerFactory.getLogger(CommandLineService.class);
-
-
     private final ResourceLoader resourceLoader;
 
 
@@ -64,17 +63,14 @@ public class CommandLineService {
      *
      * @throws IOException when CSV file is not found
      */
+
     public void loadUsers() throws IOException {
         //Load User from the user.csv file and persist in table
         saveUserData();
+
     }
 
-    public void loadDataOnStartUp() throws IOException {
-        saveRoomData();
-        saveAnimalData();
-    }
-
-    private void saveAnimalData() throws IOException {
+    public void saveAnimalData() throws IOException {
         Resource animalResource = null;
 
         try {
@@ -86,6 +82,7 @@ public class CommandLineService {
 
                 stream.skip(1).map(line -> line.split(COMMA)).forEach(data -> {
                     Animal animal = new Animal();
+                    animal.setLocated(Instant.now());
                     for (int i = 0; i < data.length; i++) {
                         switch (i) {
                             case 0:
@@ -100,31 +97,15 @@ public class CommandLineService {
                                 break;
                         }
                     }
-                /*    Set<Favorite> favorites = new HashSet<>();
-                    List<Room> matchingRooms;
-                    if (animal.getType().equals(">=")) {
-                        matchingRooms = roomRepository.findAllBySizeGreaterThanEqualOrderBySizeAsc(animal.getPreference());
-                    } else {
-                        matchingRooms = roomRepository.findAllBySizeLessThanEqualOrderBySizeDesc(animal.getPreference());
-                    }
-                    matchingRooms.forEach(e -> {
-
-                        Favorite favorite = new Favorite();
-                        favorite.setRoomId(e.getId());
-                        favorites.add(favorite);
-                    });
-
-                    animal.setFavorites(favorites);*/
-                    log.debug("Animal object to be stored --{}", animal.toString());
+                    log.debug("Animal object to be stored --{}", animal);
                     animalRepository.save(animal);
-                    //updateRoom(animal, matchingRooms);
 
 
                 });
             }
 
         } catch (IOException e) {
-            log.error("Error Occurred -> {}", e.getMessage());
+            log.error(ERROR_OCCURRED, e.getMessage());
         } finally {
             if (animalResource != null)
                 animalResource.readableChannel().close();
@@ -132,7 +113,7 @@ public class CommandLineService {
     }
 
 
-    private void saveRoomData() throws IOException {
+    public void saveRoomData() throws IOException {
         Resource roomResource = null;
 
         try {
@@ -144,6 +125,7 @@ public class CommandLineService {
 
                 stream.skip(1).map(line -> line.split(COMMA)).forEach(data -> {
                     Room room = new Room();
+                    room.setCreated(Instant.now());
                     for (int i = 0; i < data.length; i++) {
                         if (i == 0) {
                             room.setTitle(data[i].toLowerCase());
@@ -151,13 +133,13 @@ public class CommandLineService {
                             room.setSize(Long.parseLong(data[i]));
                         }
                     }
-                    log.debug("Room object to be stored --{}", room.toString());
+                    log.debug("Room object to be stored --{}", room);
                     roomRepository.save(room);
                 });
             }
 
         } catch (IOException e) {
-            log.error("Error Occurred -> {}", e.getMessage());
+            log.error(ERROR_OCCURRED, e.getMessage());
         } finally {
             if (roomResource != null)
                 roomResource.readableChannel().close();
@@ -205,7 +187,7 @@ public class CommandLineService {
             }
 
         } catch (IOException e) {
-            log.error("Error Occurred -> {}", e.getMessage());
+            log.error(ERROR_OCCURRED, e.getMessage());
         } finally {
             if (userResource != null)
                 userResource.readableChannel().close();

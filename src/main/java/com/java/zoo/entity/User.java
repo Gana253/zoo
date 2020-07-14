@@ -2,6 +2,7 @@ package com.java.zoo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.java.zoo.constants.Constants;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "user")
+@EqualsAndHashCode
 public class User implements Serializable {
     private static final long serialVersionUID = -2199168069671744980L;
 
@@ -53,8 +55,8 @@ public class User implements Serializable {
     private String lastName;
 
     @Email
-    @Size(min = 5, max = 254)
-    @Column(length = 254, unique = true)
+    @Size(min = 5, max = 120)
+    @Column(length = 120, unique = true)
     private String email;
 
     @Size(min = 2, max = 10)

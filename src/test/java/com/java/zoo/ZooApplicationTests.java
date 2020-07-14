@@ -8,7 +8,7 @@ class ZooApplicationTests {
 
     @Test
     public void main() {
-        ZooApplication.main(new String[] {});
+        ZooApplication.main(new String[]{});
     }
 
 }

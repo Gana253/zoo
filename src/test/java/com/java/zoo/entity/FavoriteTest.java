@@ -1,6 +1,5 @@
-package com.java.zoo.domain;
+package com.java.zoo.entity;
 
-import com.java.zoo.entity.Favorite;
 import com.java.zoo.web.util.TestUtil;
 import org.junit.jupiter.api.Test;
 
