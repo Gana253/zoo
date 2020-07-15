@@ -208,14 +208,14 @@ public class FavoriteControllerIT {
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         InputRequest inputRequest1 = new InputRequest(54L, 1L);
         // assign room as favorite for the given animal and expect status 200
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest1)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         // Get the favorite
         MvcResult result = restFavoriteMockMvc.perform(get("/api/favorites/room/54")
                 .accept(MediaType.APPLICATION_JSON))

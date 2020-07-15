@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 /**
@@ -125,11 +127,12 @@ public class ZooController {
      * Assign the room as favorite for given animal
      *
      * @param inputRequest the animal & room to be assigned as favorite.
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @return the {@link ResponseEntity} with status  {@code 201 (Created)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/favorite/assign")
-    public ResponseEntity<Animal> assignFavorite(@Valid @RequestBody InputRequest inputRequest) {
+    public ResponseEntity<Animal> assignFavorite(@Valid @RequestBody InputRequest inputRequest) throws URISyntaxException {
         log.debug("REST request to assign room as favorite for  animal: {}", inputRequest.getAnimalId());
 
         String requestType = "Assign Favorite Room";
@@ -139,11 +142,9 @@ public class ZooController {
             throw new BadRequestAlertException("Room is already assigned as favorite for the animal! Try with another room id, request cannot be completed", requestType, "roomidassignedalready");
         }
         zooService.assignFavoriteRoom(animal, room);
-        return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, animal.getId().toString()))
+        return ResponseEntity.created(new URI("api//favorite/assign/" + animal.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, animal.getId().toString()))
                 .body(animal);
-
-
     }
 
     /**

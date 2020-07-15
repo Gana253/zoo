@@ -210,7 +210,7 @@ public class ZooControllerIT {
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").value(inputRequest.getAnimalId().intValue()))
                 .andExpect(jsonPath("$.favorites.[*].roomId").value(hasItem(inputRequest.getRoomId().intValue())));
