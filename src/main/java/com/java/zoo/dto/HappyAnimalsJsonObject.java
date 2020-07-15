@@ -7,10 +7,6 @@ public interface HappyAnimalsJsonObject {
     @Value("#{target.Roomtitle}")
     String getRoomtitle();
 
-    void setRoomtitle(String title);
-
     @Value("#{target.HappyAnimals}")
     Long getHappyAnimals();
-
-    void setHappyAnimals(Long number);
 }

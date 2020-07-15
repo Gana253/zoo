@@ -23,8 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -48,7 +47,7 @@ public class ZooControllerIT {
     public void placeAnimal() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 1L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -64,7 +63,7 @@ public class ZooControllerIT {
     public void placeAnimalInRoomAgain() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 2L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -78,7 +77,7 @@ public class ZooControllerIT {
         inputRequest.setAnimalId(0L);
         inputRequest.setRoomId(1L);
         // Place Animal in the room with invalid animal id  and expect status 404
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -89,7 +88,7 @@ public class ZooControllerIT {
     public void placeAnimalWithInvalidRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 0L);
         // Place Animal in the room with invalid room id  and expect status 404
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -102,7 +101,7 @@ public class ZooControllerIT {
     public void moveAnimal() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 2L);
         // Move Animal from existing room to the other and expect status 200
-        restZooMockMvc.perform(post("/api/animal/move")
+        restZooMockMvc.perform(put("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
@@ -113,10 +112,33 @@ public class ZooControllerIT {
 
     @Test
     @Transactional
+    public void moveAnimalToTheSameRoom() throws Exception {
+        InputRequest inputRequest = new InputRequest(52L, 2L);
+        // Move Animal from existing room to the other and expect status 200
+        restZooMockMvc.perform(put("/api/animal/move")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @Transactional
+    public void moveAnimalWhichIsNotPlacedYet() throws Exception {
+        InputRequest inputRequest = new InputRequest(54L, 2L);
+        // Move Animal from existing room to the other and expect status 200
+        restZooMockMvc.perform(put("/api/animal/move")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
     public void moveAnimalWithInvalidAnimalId() throws Exception {
         InputRequest inputRequest = new InputRequest(0L, 1L);
         // Move Animal in the room with invalid animal id  and expect status 404
-        restZooMockMvc.perform(post("/api/animal/move")
+        restZooMockMvc.perform(put("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -127,7 +149,7 @@ public class ZooControllerIT {
     public void moveAnimalWithInvalidRoomId() throws Exception {
         InputRequest inputRequest = new InputRequest(52L, 0L);
         // Move Animal in the room with invalid room id  and expect status 404
-        restZooMockMvc.perform(post("/api/animal/move")
+        restZooMockMvc.perform(put("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isBadRequest());
@@ -139,7 +161,7 @@ public class ZooControllerIT {
     public void placeAnotherAnimal() throws Exception {
         InputRequest inputRequest = new InputRequest(53L, 2L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())

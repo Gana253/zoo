@@ -277,14 +277,14 @@ public class AnimalControllerIT {
         }
         InputRequest inputRequest = new InputRequest(56L, 2L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk());
 
         InputRequest inputRequest1 = new InputRequest(57L, 2L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest1)))
                 .andExpect(status().isOk());
@@ -304,7 +304,7 @@ public class AnimalControllerIT {
     public void getHappyAnimals() throws Exception {
         InputRequest inputRequest = new InputRequest(56L, 3L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/move")
+        restZooMockMvc.perform(put("/api/animal/move")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk());

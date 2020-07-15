@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -47,7 +48,7 @@ public class ZooControllerWithSercurityIT {
         MvcResult resultJwtToken = getMvcResultForAuthentication();
         InputRequest inputRequest = new InputRequest(55L, 1L);
         // Place Animal in the room and expect status 200
-        restZooMockMvc.perform(post("/api/animal/place")
+        restZooMockMvc.perform(put("/api/animal/place")
                 .header("Authorization", "Bearer " + resultJwtToken.getResponse().getContentAsString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))

@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RoomControllerIT {
 
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
-    private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
     private static final Long DEFAULT_SIZE = 0L;
     private static final Long UPDATED_SIZE = 1L;

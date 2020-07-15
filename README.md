@@ -124,7 +124,7 @@ Place Animal to Room:
 ```
  curl --header "Content-Type: application/json"\
         --header "Authorization: Bearer <JWT_TOKEN>" \
-        --request POST \
+        --request PUT \
         --data '{"animalId": 52,"roomId": 1}' \
         http://localhost:5678/api/animal/place
 ```
@@ -132,7 +132,7 @@ Move Animal to another Room:
 ````
  curl --header "Content-Type: application/json"\
         --header "Authorization: Bearer <JWT_TOKEN>" \
-        --request POST \
+        --request PUT \
         --data '{"animalId": 52,"roomId": 1}' \
         http://localhost:5678/api/animal/move
 ````

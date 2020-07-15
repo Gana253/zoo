@@ -43,7 +43,7 @@ public class ZooController {
 
 
     /**
-     * {@code POST  /animal/place}  : Place animal in room
+     * {@code PUT  /animal/place}  : Place animal in room
      * <p>
      * Places the animal into the room based on the preference.
      *
@@ -51,7 +51,7 @@ public class ZooController {
      * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
-    @PostMapping("/animal/place")
+    @PutMapping("/animal/place")
     public ResponseEntity<Animal> placeAnimal(@Valid @RequestBody InputRequest inputRequest) {
         log.debug("REST request to place animal in room : {}", inputRequest.getAnimalId());
 
@@ -71,7 +71,7 @@ public class ZooController {
 
 
     /**
-     * {@code POST  /animal/move}  : move animal from one room to another
+     * {@code PUT  /animal/move}  : move animal from one room to another
      * <p>
      * Move the animal from the existing room to the new one.
      * If user passes the valid roomid to which the animal to be moved, it will be moved accordingly
@@ -80,20 +80,24 @@ public class ZooController {
      * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
-    @PostMapping("/animal/move")
+    @PutMapping("/animal/move")
     public ResponseEntity<Animal> moveAnimal(@Valid @RequestBody InputRequest inputRequest) {
         log.debug("REST request to move animal to another room : {}", inputRequest.getAnimalId());
 
         String requestType = "Move Animal";
         Animal animal = validateAnimalId(inputRequest.getAnimalId(), requestType);
+        if (null == animal.getRoom()) {
+            throw new BadRequestAlertException("Animal is not associated with any room try placing the room instead of move, request cannot be completed", requestType, "notassociatedwithroom");
+        }
+        if (animal.getRoom().getId() == inputRequest.getRoomId()) {
+            throw new BadRequestAlertException("Animal currently placed room and to be moved room are same Please check, request cannot be completed", requestType, "sameroomid");
+        }
         Room room = validateRoomId(inputRequest.getRoomId(), requestType);
         zooService.moveAnimal(animal, room);
 
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, animal.getId().toString()))
                 .body(animal);
-
-
     }
 
     /**

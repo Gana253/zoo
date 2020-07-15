@@ -8,6 +8,7 @@ public class ConstantsTest {
 
     @Test
     public void testConstants() {
+        Constants constants = new Constants();
         assertThat(Constants.CREATED_BY).isEqualTo("SYSTEM");
         assertThat(Constants.ANIMAL_ENTITY_NAME).isEqualTo("animal");
         assertThat(Constants.ANONYMOUS_USER).isEqualTo("anonymoususer");
