@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -54,9 +53,8 @@ public class ZooControllerWithSercurityIT {
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.animals.[*].id").value(hasItem(inputRequest.getAnimalId().intValue())))
-                .andExpect(jsonPath("$.id").value(inputRequest.getRoomId().intValue()));
-
+                .andExpect(jsonPath("$.room.id").value(inputRequest.getRoomId().intValue()))
+                .andExpect(jsonPath("$.id").value(inputRequest.getAnimalId().intValue()));
     }
 
     @Test

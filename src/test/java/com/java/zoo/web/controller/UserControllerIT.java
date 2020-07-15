@@ -1,6 +1,7 @@
 package com.java.zoo.web.controller;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.java.zoo.ZooApplication;
 import com.java.zoo.constants.Constants;
 import com.java.zoo.dto.PasswordChangeDTO;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -211,6 +213,22 @@ public class UserControllerIT {
                 .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LASTNAME)))
                 .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
                 .andExpect(jsonPath("$.[*].langKey").value(hasItem(DEFAULT_LANGKEY)));
+    }
+
+    @Test
+    public void getAllUsersWithAnonymousUser() throws Exception {
+        // Initialize the database
+        user.setLogin(Constants.ANONYMOUS_USER);
+        userRepository.save(user);
+
+        // Get all the users
+        MvcResult result = restUserMockMvc
+                .perform(get("/api/users").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        JsonNode node = TestUtil.mapper.readTree(result.getResponse().getContentAsString());
+        assertThat(0).isEqualTo(node.size());
     }
 
     @Test

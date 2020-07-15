@@ -53,8 +53,8 @@ public class ZooControllerIT {
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.animals.[*].id").value(hasItem(inputRequest.getAnimalId().intValue())))
-                .andExpect(jsonPath("$.id").value(inputRequest.getRoomId().intValue()));
+                .andExpect(jsonPath("$.room.id").value(inputRequest.getRoomId().intValue()))
+                .andExpect(jsonPath("$.id").value(inputRequest.getAnimalId().intValue()));
 
     }
 
@@ -107,8 +107,8 @@ public class ZooControllerIT {
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.animals.[*].id").value(hasItem(inputRequest.getAnimalId().intValue())))
-                .andExpect(jsonPath("$.id").value(inputRequest.getRoomId().intValue()));
+                .andExpect(jsonPath("$.room.id").value(inputRequest.getRoomId().intValue()))
+                .andExpect(jsonPath("$.id").value(inputRequest.getAnimalId().intValue()));
     }
 
     @Test
@@ -144,8 +144,8 @@ public class ZooControllerIT {
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.animals.[*].id").value(hasItem(inputRequest.getAnimalId().intValue())))
-                .andExpect(jsonPath("$.id").value(inputRequest.getRoomId().intValue()));
+                .andExpect(jsonPath("$.room.id").value(inputRequest.getRoomId().intValue()))
+                .andExpect(jsonPath("$.id").value(inputRequest.getAnimalId().intValue()));
 
     }
 
@@ -183,7 +183,7 @@ public class ZooControllerIT {
     @Transactional
     @Order(6)
     public void assignFavorite() throws Exception {
-        InputRequest inputRequest = new InputRequest(52L, 2L);
+        InputRequest inputRequest = new InputRequest(52L, 3L);
         // assign room as favorite for the given animal and expect status 200
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -220,7 +220,7 @@ public class ZooControllerIT {
     @Transactional
     @Order(7)
     public void assignFavoriteSameRoomAgainForAnimal() throws Exception {
-        InputRequest inputRequest = new InputRequest(52L, 2L);
+        InputRequest inputRequest = new InputRequest(52L, 3L);
         // assign room as favorite for the given animal and expect status 200
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -232,7 +232,7 @@ public class ZooControllerIT {
     @Transactional
     @Order(8)
     public void unAssignFavorite() throws Exception {
-        InputRequest inputRequest = new InputRequest(52L, 2L);
+        InputRequest inputRequest = new InputRequest(52L, 3L);
         // unassign room as favorite for the given animal and expect status 200
         restZooMockMvc.perform(delete("/api/favorite/unassign")
                 .contentType(MediaType.APPLICATION_JSON)

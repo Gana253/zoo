@@ -1,0 +1,14 @@
+version: '2'
+services:
+  zoo-app:
+    image: zoo
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://zoo-mysql:3306/zooeurail?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+      - MYSQL_SLEEP=30 # gives time for other services to boot before the application
+    ports:
+      - 5678:5678
+  zoo-mysql:
+    extends:
+      file: mysql.yml
+      service: zoo-mysql

@@ -3,6 +3,8 @@ package com.java.zoo.web.controller;
 
 import com.java.zoo.ZooApplication;
 import com.java.zoo.dto.JwtRequest;
+import com.java.zoo.repository.UserRepository;
+import com.java.zoo.service.CommandLineService;
 import com.java.zoo.web.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,18 @@ public class JwtAuthenticationControllerIT {
     @Autowired
     private MockMvc jwtAuthenticateMvcMock;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CommandLineService commandLineService;
 
     @Test
     public void getTokenForUser() throws Exception {
+        userRepository.deleteAll();
+        userRepository.flush();
+        commandLineService.loadUsers();
+
         JwtRequest request = new JwtRequest();
         request.setUsername("admin");
         request.setPassword("admin");

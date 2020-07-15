@@ -48,11 +48,11 @@ public class ZooController {
      * Places the animal into the room based on the preference.
      *
      * @param inputRequest the animal id /room id to be placed .
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated room, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
     @PostMapping("/animal/place")
-    public ResponseEntity<Room> placeAnimal(@Valid @RequestBody InputRequest inputRequest) {
+    public ResponseEntity<Animal> placeAnimal(@Valid @RequestBody InputRequest inputRequest) {
         log.debug("REST request to place animal in room : {}", inputRequest.getAnimalId());
 
         String requestType = "Place Animal";
@@ -64,7 +64,7 @@ public class ZooController {
         zooService.placeAnimal(animal, room);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, animal.getId().toString()))
-                .body(room);
+                .body(animal);
 
 
     }
@@ -77,11 +77,11 @@ public class ZooController {
      * If user passes the valid roomid to which the animal to be moved, it will be moved accordingly
      *
      * @param inputRequest the animal to be moved.
-     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated room, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
+     * @return the {@link ResponseEntity} with status  {@code 200 (OK)} and with body the updated animal, or with status {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the animal/room id is null  or for the given input animal/room id is not available in DB.
      */
     @PostMapping("/animal/move")
-    public ResponseEntity<Room> moveAnimal(@Valid @RequestBody InputRequest inputRequest) {
+    public ResponseEntity<Animal> moveAnimal(@Valid @RequestBody InputRequest inputRequest) {
         log.debug("REST request to move animal to another room : {}", inputRequest.getAnimalId());
 
         String requestType = "Move Animal";
@@ -91,7 +91,7 @@ public class ZooController {
 
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, Constants.ANIMAL_ENTITY_NAME, animal.getId().toString()))
-                .body(room);
+                .body(animal);
 
 
     }

@@ -203,21 +203,21 @@ public class FavoriteControllerIT {
     @Test
     @Transactional
     public void getAllFavoriteRoomId() throws Exception {
-        InputRequest inputRequest = new InputRequest(52L, 2L);
+        InputRequest inputRequest = new InputRequest(54L, 2L);
         // assign room as favorite for the given animal and expect status 200
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest)))
                 .andExpect(status().isOk());
 
-        InputRequest inputRequest1 = new InputRequest(52L, 3L);
+        InputRequest inputRequest1 = new InputRequest(54L, 1L);
         // assign room as favorite for the given animal and expect status 200
         restZooMockMvc.perform(post("/api/favorite/assign")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(inputRequest1)))
                 .andExpect(status().isOk());
         // Get the favorite
-        MvcResult result = restFavoriteMockMvc.perform(get("/api/favorites/room/52")
+        MvcResult result = restFavoriteMockMvc.perform(get("/api/favorites/room/54")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
