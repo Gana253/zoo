@@ -77,7 +77,6 @@ public class RoomControllerIT {
 
         int databaseSizeBeforeCreate = roomRepository.findAll().size();
         room.setTitle("EEEEEEE");
-        System.out.println(TestUtil.mapper.writeValueAsString(room));
         // Create the Room
         restRoomMockMvc.perform(post("/api/rooms")
                 .contentType(MediaType.APPLICATION_JSON)
