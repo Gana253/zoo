@@ -286,4 +286,13 @@ public class ZooControllerIT {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @Transactional
+    public void removeAnimalFromRoomWhichIsNotPlaced() throws Exception {
+        Optional<Animal> animal = animalRepository.findById(53L);
+        // delete Animal from room request which is not placed already
+        restZooMockMvc.perform(delete("/api/animal/remove/{id}", 53)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }

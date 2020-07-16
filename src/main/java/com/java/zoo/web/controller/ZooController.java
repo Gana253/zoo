@@ -88,10 +88,8 @@ public class ZooController {
 
         String requestType = "Move Animal";
         Animal animal = validateAnimalId(inputRequest.getAnimalId(), requestType);
-        if (null == animal.getRoom()) {
-            throw new BadRequestAlertException("Animal is not associated with any room try placing the room instead of move, request cannot be completed", requestType, "notassociatedwithroom");
-        }
-        if (animal.getRoom().getId() == inputRequest.getRoomId()) {
+        validateAnimalRoomAvailable(requestType, animal);
+        if (animal.getRoom().getId().equals(inputRequest.getRoomId())) {
             throw new BadRequestAlertException("Animal currently placed room and to be moved room are same Please check, request cannot be completed", requestType, "sameroomid");
         }
         Room room = validateRoomId(inputRequest.getRoomId(), requestType);
@@ -114,6 +112,7 @@ public class ZooController {
         log.debug("REST request to delete animal from room: {}", animalId);
         String requestType = "Delete Animal";
         Animal animal = validateAnimalId(Long.parseLong(animalId), requestType);
+        validateAnimalRoomAvailable(requestType, animal);
         zooService.deleteAnimalFromRoom(animal);
 
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "animal deleted from room", animalId)).build();
@@ -184,5 +183,11 @@ public class ZooController {
             throw new BadRequestAlertException("Couldn't find animal with given id , request cannot be completed", requestType, "animalidwrong");
         }
         return animal.get();
+    }
+
+    private void validateAnimalRoomAvailable(String requestType, Animal animal) {
+        if (null == animal.getRoom()) {
+            throw new BadRequestAlertException("Animal is not associated with any room try placing the animal to a room, request cannot be completed", requestType, "notassociatedwithroom");
+        }
     }
 }
